@@ -31,8 +31,9 @@ async def on_ready():
 
 @bot.slash_command(guild_ids=serveurs, name="ping", description="PONG !")
 async def ping(interaction: discord.Interaction):
-    embed = BotEmbed(title="PONG")
-    await interaction.response.send_message(embed=embed)
+    embed = BotEmbed(title="PONG", colour=discord.Colour.green())
+    embed.remove_footer()
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @bot.slash_command(guild_ids=serveurs, name="hello", description="Dis bonjour !")
 async def hello(interaction: discord.Interaction):
