@@ -5,3 +5,4 @@ Il dispose des commandes suivantes :
 - /ping
 - /hello
 - /feedback
+- /civ_draft (en construction...)
