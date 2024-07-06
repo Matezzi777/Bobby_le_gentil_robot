@@ -5,15 +5,19 @@
 #	 / /__/ / / /_/ / / /__/ / / /__/ /    / /         / /____  / /___          / /  | | / /_/ / / /__/ / / /_/ /    / /
 #	/______/ /_____/ /______/ /______/    /_/         /______/ /_____/         /_/  /_/ /_____/ /______/ /_____/    /_/
 
+# IDÉES
+# REPORT DES PARTIES (différent jeux pris en charge)
+# HISTORIQUE DES PARTIES JOUEES (différent jeux pris en charge)
+# STATISTIQUES (différents jeux pris en charge et stats liées au serveur)
+
 #==================== INITIALISATION ====================
 import discord
 import discord.ui
 from classes import Bot, BotEmbed, FeedbackForm
-from config import TOKEN
+from config import TOKEN, SERVERS
 from draft import *
 
 bot = Bot()
-serveurs = [689646413788872718, 1212545993455964180]
 
 #====================== CONSTANTES ======================
 
@@ -30,7 +34,7 @@ async def on_ready():
 
 #====================== COMMANDES =======================
 #Renvoit PONG si le bot est connecté
-@bot.slash_command(guild_ids=serveurs, name="ping", description="PONG !")
+@bot.slash_command(guild_ids=SERVERS, name="ping", description="PONG !")
 async def ping(interaction: discord.Interaction):
     print(f"COMMAND : /ping used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="PONG", colour=discord.Colour.green())
@@ -38,14 +42,14 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Renvoit une présentation du bot
-@bot.slash_command(guild_ids=serveurs, name="hello", description="Dis bonjour !")
+@bot.slash_command(guild_ids=SERVERS, name="hello", description="Dis bonjour !")
 async def hello(interaction: discord.Interaction):
     print(f"COMMAND : /hello used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI et garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
-@bot.slash_command(guild_ids=serveurs, name="civ_draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
+@bot.slash_command(guild_ids=SERVERS, name="civ_draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
 async def civ_draft(interaction: discord.Interaction, nb_leaders : int = 10):
     print(f"COMMAND : /civ_draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     author = interaction.user
@@ -97,7 +101,7 @@ async def civ_draft(interaction: discord.Interaction, nb_leaders : int = 10):
         return await interaction.followup.send(embed=embed_draft)
 
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
-@bot.slash_command(guild_ids=serveurs, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
+@bot.slash_command(guild_ids=SERVERS, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
 async def feedback(interaction: discord.Interaction):
     print(f"COMMAND : /feedback used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     await interaction.response.send_modal(FeedbackForm())
