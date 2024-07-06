@@ -1,7 +1,7 @@
 #==================== INITIALISATION ====================
 import discord
 from discord.ext import commands
-from config import VERSION
+from config import VERSION, ID_ADMIN
 
 #========================= BOT ==========================
 
@@ -10,7 +10,6 @@ class Bot(commands.Bot):
         super().__init__(command_prefix="!", intents=discord.Intents.all(), description=f"Bobby v{VERSION}")
 
 #==================== COLOURS & INFOS ===================
-ID_ADMIN = 866997795993944084
 BOT_EMBED_RGB = discord.Colour.from_rgb(59, 149, 212)
 
 #======================== EMBEDS ========================

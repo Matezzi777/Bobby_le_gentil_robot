@@ -26,6 +26,7 @@ touch config.py
 Edit the file as follow :
 ```py
 TOKEN : str = "your_bot_token"
+ID_ADMIN : int = "your_discord_id (integer)" 
 SERVERS = [id_server_1 : int, id_server_2 : int, ...]
 VERSION = "X.X"
 ```
