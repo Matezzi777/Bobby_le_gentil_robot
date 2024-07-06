@@ -7,7 +7,7 @@ from config import VERSION, ID_ADMIN
 
 class Bot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="!", intents=discord.Intents.all(), description=f"Bobby v{VERSION}")
+        super().__init__(command_prefix="!", intents=discord.Intents.all(), description=f"Bobby v{VERSION}", help_command=None)
 
 #==================== COLOURS & INFOS ===================
 BOT_EMBED_RGB = discord.Colour.from_rgb(59, 149, 212)
