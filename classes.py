@@ -11,7 +11,7 @@ class Bot(commands.Bot):
 
 #==================== COLOURS & INFOS ===================
 ID_ADMIN = 866997795993944084
-BOT_EMBED_RGB = discord.Colour.from_rgb(128, 5, 5)
+BOT_EMBED_RGB = discord.Colour.from_rgb(59, 149, 212)
 
 #======================== EMBEDS ========================
 
