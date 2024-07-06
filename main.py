@@ -45,7 +45,7 @@ async def ping(interaction: discord.Interaction):
 @bot.slash_command(guild_ids=SERVERS, name="hello", description="Dis bonjour !")
 async def hello(interaction: discord.Interaction):
     print(f"COMMAND : /hello used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
-    embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI et garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible ici : https://github.com/Matezzi777/Bobby_le_gentil_robot\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
+    embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI et garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible [ici](https://github.com/Matezzi777/Bobby_le_gentil_robot)\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
