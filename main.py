@@ -8,7 +8,7 @@
 #==================== INITIALISATION ====================
 import discord
 import discord.ui
-from classes import Bot, BotEmbed
+from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN
 
 bot = Bot()
@@ -48,7 +48,7 @@ async def civ_draft(interaction: discord.Interaction):
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
 @bot.slash_command(guild_ids=serveurs, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
 async def feedback(interaction: discord.Interaction):
-    ...
+    await interaction.response.send_modal(FeedbackForm())
 
 #========================= RUN ==========================
 bot.run(TOKEN)
