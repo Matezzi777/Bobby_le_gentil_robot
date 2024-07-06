@@ -1,4 +1,4 @@
-# Bobby le robot gentil !
+# Bobby le robot gentil est là !
 
 Bobby le robot gentil est à votre service !
 Il dispose des commandes suivantes :
