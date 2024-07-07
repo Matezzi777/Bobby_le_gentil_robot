@@ -50,7 +50,8 @@ async def hello(interaction: discord.Interaction):
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
 @bot.slash_command(guild_ids=SERVERS, name="civ_draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
-async def civ_draft(interaction: discord.Interaction, nb_leaders : int = 10):
+async def civ_draft(interaction: discord.Interaction,
+                    nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
     print(f"COMMAND : /civ_draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     author = interaction.user
     if (not author.voice):
