@@ -27,7 +27,7 @@ Edit the file as follow :
 ```py
 TOKEN : str = "your_bot_token"
 ID_ADMIN : int = "your_discord_id (integer)" 
-SERVERS = [id_server_1 : int, id_server_2 : int, ...]
+SERVERS : list[int]= ["id_server_1", "id_server_2", ...]
 VERSION = "X.X"
 ```
 ### 5. Run the bot
