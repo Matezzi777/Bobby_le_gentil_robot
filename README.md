@@ -2,10 +2,13 @@
 
 Bobby le robot gentil est à votre service !
 Il dispose des commandes suivantes :
-- /ping
-- /hello
-- /feedback
-- /civ_draft
+- Slash commandes :
+    - /ping
+    - /hello
+    - /feedback
+    - /civ_draft
+- Commandes de message :
+    - repeat
 
 ## How to get Bobby on your server ?
 ### 1. Clone the project

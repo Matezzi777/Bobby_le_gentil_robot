@@ -32,7 +32,7 @@ async def on_ready():
     print("    /______/ /_____/ /______/ /______/    /_/         /______/ /_____/         /_/  /_/ /_____/ /______/ /_____/    /_/")
     return print(f"\n... est connecté.\nRock n'Roll !\n")
 
-#====================== COMMANDES =======================
+#=================== SLASH COMMANDES ====================
 #Renvoit PONG si le bot est connecté
 @bot.slash_command(guild_ids=SERVERS, name="ping", description="PONG !")
 async def ping(interaction: discord.Interaction):
@@ -106,6 +106,16 @@ async def civ_draft(interaction: discord.Interaction,
 async def feedback(interaction: discord.Interaction):
     print(f"COMMAND : /feedback used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     await interaction.response.send_modal(FeedbackForm())
+
+#==================== USER COMMANDES ====================
+
+#================== MESSAGES COMMANDES ==================
+#Répète un message
+@bot.message_command(guild_ids=SERVERS, name="repeat")
+async def mycallback(interaction : discord.Interaction, message : discord.Message):
+    embed = BotEmbed(title="REPEAT", description=f"{message.created_at}")
+    embed.add_field(name=f"", value=f"**{message.author.mention} said :**\n{message.content}")
+    return await interaction.response.send_message(embed=embed)
 
 #========================= RUN ==========================
 bot.run(TOKEN)
