@@ -16,7 +16,7 @@ Il dispose des commandes suivantes :
 ### 2. Create a virtual environment
 ```sh
 python3 -m venv venv
-source env/bin/activate
+source venv/bin/activate
 ```
 ### 3. Add the needed libraries
 ```sh
