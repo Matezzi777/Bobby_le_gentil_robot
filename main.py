@@ -113,6 +113,7 @@ async def feedback(interaction: discord.Interaction):
 #Répète un message
 @bot.message_command(guild_ids=SERVERS, name="repeat")
 async def mycallback(interaction : discord.Interaction, message : discord.Message):
+    print(f"MESSAGE COMMAND : Repeat used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="REPEAT", description=f"{message.created_at}")
     embed.add_field(name=f"", value=f"**{message.author.mention} said :**\n{message.content}")
     return await interaction.response.send_message(embed=embed)
