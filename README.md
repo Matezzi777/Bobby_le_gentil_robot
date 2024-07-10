@@ -16,8 +16,8 @@ Il dispose des commandes suivantes :
 ```git clone https://github.com/Matezzi777/Bobby_le_gentil_robot```
 ### 2. Create a virtual environment
 ```sh
-python -m venv env
-source env/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 ```
 ### 3. Add the needed libraries
 ```sh
@@ -31,8 +31,8 @@ Edit the file as follow :
 ```py
 TOKEN : str = "your_bot_token"
 ID_ADMIN : int = "your_discord_id (integer)" 
-SERVERS : list[int]= ["id_server_1", "id_server_2", ...]
-VERSION = "X.X"
+SERVERS : list[int] = ["id_server_1", "id_server_2", ...]
+VERSION : str = "X.X"
 ```
 ### 5. Run the bot
 ```sh
