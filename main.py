@@ -117,7 +117,7 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     mot: str = get_word(nb_lettres)
     print(f"    Mot à trouver : {mot}")
     #Affiche la grille
-    embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+    embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais.\nAttention à ne pas mettre d'accents !")
     embed_content : list[str] = initialize_embed_content(nb_lettres, nb_essais)
     embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
     embed.add_field(name="", value=f"**Encore {nb_essais} essais.**", inline=False)
@@ -141,20 +141,20 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
             await interaction.followup.send(embed=embed_response, ephemeral=True)
         elif (new_line == "FOUND"):
             print("    VICTOIRE")
-            new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+            new_embed = BotEmbed(title="WORDLE")
             line: str = ""
             z: int = 0
             while (z < len(proposition)):
                 line = f"{line}🟩 "
                 z = z + 1
             embed_content[i] = f"{line} --- {mot}"
-            new_embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
+            new_embed.add_field(name="Historique :", value=get_str_from_list(embed_content), inline=False)
             embed_response = BotEmbed(title="MOT TROUVÉ", colour=discord.Colour.green(), description=f"Félicitations ! Vous avez trouvé le mot {mot} en {i+1} essais !")
             await guess.delete()
             await message.edit(embed=new_embed)
             return await interaction.followup.send(embed=embed_response)
         else:
-            new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+            new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais.\nAttention à ne pas mettre d'accents !")
             embed_content[i] = new_line
             new_embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
             new_embed.add_field(name="", value=f"**{nb_essais-i-1} essais restants.**", inline=False)
