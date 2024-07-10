@@ -128,7 +128,6 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
         #Attends pour une réponse
         guess: discord.Message = await bot.wait_for('message', check=lambda message: message.channel == interaction.channel)
         proposition: str = f"{guess.content.upper().strip()}"
-        print(f"        Guess : {proposition} ({i+1}/{nb_essais})")
         #Vérifie la réponse
         new_line: str = check_guess_validity(proposition, mot)
         if (new_line == "MISSING"):
