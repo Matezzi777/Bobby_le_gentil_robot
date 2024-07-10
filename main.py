@@ -16,6 +16,7 @@ import discord.ui
 from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN, SERVERS
 from draft import *
+from wordle import *
 
 bot = Bot()
 
@@ -45,7 +46,7 @@ async def ping(interaction: discord.Interaction):
 @bot.slash_command(guild_ids=SERVERS, name="hello", description="Dis bonjour !")
 async def hello(interaction: discord.Interaction):
     print(f"COMMAND : /hello used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
-    embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI et garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible [ici](https://github.com/Matezzi777/Bobby_le_gentil_robot).\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
+    embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI, jouer à Wordle ou garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible [ici](https://github.com/Matezzi777/Bobby_le_gentil_robot).\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
@@ -107,16 +108,75 @@ async def feedback(interaction: discord.Interaction):
     print(f"COMMAND : /feedback used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     await interaction.response.send_modal(FeedbackForm())
 
+#Lance une partie de Wordle
+@bot.slash_command(guild_ids=SERVERS, name="wordle", description="Lance une partie de Wordle.")
+async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Option(int, "Le nombre de lettres du mot à deviner.", required=False, default=5), nb_essais: int = discord.Option(int, "Le nombre d'essais maximum pour deviner'.", required=False, default=6)):
+    author : discord.Member = interaction.user
+    print(f"COMMAND : /wordle used by @{author.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    #Trouve un mot du bon nombre de lettres
+    mot: str = get_word(nb_lettres)
+    print(f"    Mot à trouver : {mot}")
+    #Affiche la grille
+    embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+    embed_content : list[str] = initialize_embed_content(nb_lettres, nb_essais)
+    embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
+    embed.add_field(name="", value=f"**Encore {nb_essais} essais.**", inline=False)
+    #Affiche le message initial
+    message = await interaction.response.send_message(embed=embed)
+    i: int = 0
+    while (i < nb_essais):
+        #Attends pour une réponse
+        guess: discord.Message = await bot.wait_for('message', check=lambda message: message.channel == interaction.channel)
+        proposition: str = f"{guess.content.upper().strip()}"
+        print(f"        Guess : {proposition} ({i+1}/{nb_essais})")
+        #Vérifie la réponse
+        new_line: str = check_guess_validity(proposition, mot)
+        if (new_line == "MISSING"):
+            embed_response = BotEmbed(title="MOT INTROUVABLE", colour=discord.Colour.red(), description=f"Le mot {proposition} n'est pas dans le dictionnaire. Vérifiez l'orthographe du mot.")
+            await guess.delete()
+            await interaction.followup.send(embed=embed_response,ephemeral=True)
+        elif (new_line == "INVALIDE"):
+            embed_response = BotEmbed(title="LONGUEUR INCORRECTE", colour=discord.Colour.red(), description=f"Vous recherchez une mot de {nb_lettres} lettres.\n'{proposition}' fait {len(proposition)} lettres.")
+            await guess.delete()
+            await interaction.followup.send(embed=embed_response, ephemeral=True)
+        elif (new_line == "FOUND"):
+            print("    VICTOIRE")
+            new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+            line: str = ""
+            z: int = 0
+            while (z < len(proposition)):
+                line = f"{line}🟩 "
+                z = z + 1
+            embed_content[i] = f"{line} --- {mot}"
+            new_embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
+            embed_response = BotEmbed(title="MOT TROUVÉ", colour=discord.Colour.green(), description=f"Félicitations ! Vous avez trouvé le mot {mot} en {i+1} essais !")
+            await guess.delete()
+            await message.edit(embed=new_embed)
+            return await interaction.followup.send(embed=embed_response)
+        else:
+            new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais !")
+            embed_content[i] = new_line
+            new_embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
+            new_embed.add_field(name="", value=f"**{nb_essais-i-1} essais restants.**", inline=False)
+            await guess.delete()
+            await message.edit(embed=new_embed)
+            i = i + 1
+    print("    DÉFAITE")
+    embed_response = BotEmbed(title="WORDLE", colour=discord.Colour.red(), description=f"GAME OVER ! Le mot à trouver était {mot}.")
+    return await interaction.followup.send(embed=embed_response)
+
 #==================== USER COMMANDES ====================
 
 #================== MESSAGES COMMANDES ==================
 #Répète un message
 @bot.message_command(guild_ids=SERVERS, name="repeat")
-async def mycallback(interaction : discord.Interaction, message : discord.Message):
+async def repeat(interaction : discord.Interaction, message : discord.Message):
     print(f"MESSAGE COMMAND : Repeat used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="REPEAT", description=f"{message.created_at}")
     embed.add_field(name=f"", value=f"**{message.author.mention} said :**\n{message.content}")
     return await interaction.response.send_message(embed=embed)
+
+#Traduis un message
 
 #========================= RUN ==========================
 bot.run(TOKEN)

@@ -7,6 +7,7 @@ Il dispose des commandes suivantes :
     - /hello
     - /feedback
     - /civ_draft
+    - /wordle
 - Commandes de message :
     - repeat
 
