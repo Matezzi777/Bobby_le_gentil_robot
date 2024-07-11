@@ -120,7 +120,7 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais.\nAttention à ne pas mettre d'accents !")
     embed_content : list[str] = initialize_embed_content(nb_lettres, nb_essais)
     embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
-    embed.add_field(name="", value=f"**Encore {nb_essais} essais.**", inline=False)
+    embed.add_field(name="", value=f"**Encore {nb_essais} essais.\nEntrez *end_game* pour arrêter la partie.**", inline=False)
     #Affiche le message initial
     message = await interaction.response.send_message(embed=embed)
     i: int = 0
@@ -128,6 +128,12 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
         #Attends pour une réponse
         guess: discord.Message = await bot.wait_for('message', check=lambda message: message.channel == interaction.channel)
         proposition: str = f"{guess.content.upper().strip()}"
+        if (proposition == "END_GAME"):
+            print("    ABANDON")
+            await guess.delete()
+            embed_response = BotEmbed(title="PARTIE ABANDONNÉE", description=f"Partie abandonnée.\nLe mot était : {mot}.")
+            update_wordle_stats(author, "GiveUp")
+            return await interaction.followup.send(embed=embed_response)
         #Vérifie la réponse
         new_line: str = check_guess_validity(proposition, mot)
         if (new_line == "MISSING"):
@@ -151,17 +157,19 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
             embed_response = BotEmbed(title="MOT TROUVÉ", colour=discord.Colour.green(), description=f"Félicitations ! Vous avez trouvé le mot {mot} en {i+1} essais !")
             await guess.delete()
             await message.edit(embed=new_embed)
+            update_wordle_stats(author, "Victory")
             return await interaction.followup.send(embed=embed_response)
         else:
             new_embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais.\nAttention à ne pas mettre d'accents !")
             embed_content[i] = new_line
             new_embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
-            new_embed.add_field(name="", value=f"**{nb_essais-i-1} essais restants.**", inline=False)
+            new_embed.add_field(name="", value=f"**{nb_essais-i-1} essais restants.\nEntrez *end_game* pour arrêter la partie.**", inline=False)
             await guess.delete()
             await message.edit(embed=new_embed)
             i = i + 1
     print("    DÉFAITE")
     embed_response = BotEmbed(title="WORDLE", colour=discord.Colour.red(), description=f"GAME OVER ! Le mot à trouver était {mot}.")
+    update_wordle_stats(author, "Lose")
     return await interaction.followup.send(embed=embed_response)
 
 #==================== USER COMMANDES ====================

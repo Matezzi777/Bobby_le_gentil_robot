@@ -1,4 +1,7 @@
 import random
+import sqlite3
+import datetime
+import discord
 
 #Tire un mot au hasard du nombre de lettres spécifié
 def get_word(nb_lettres: int) -> str:
@@ -92,3 +95,89 @@ def check_guess_validity(guess: str, mot: str) -> str:
         i = i + 1
     string = f"{string} --- {guess}"
     return (string)
+
+#Met à jour les stats du joueur
+def update_wordle_stats(author: discord.User, result: str):
+    #Si le joueur n'es pas dans la BDD, crée une entrée formattée pour lui
+    if (not is_user_in_db(author, "Wordle")):
+        add_user_in_wordle_db(author)
+    update_user_wordle_stat(author, "Played")
+    update_user_wordle_stat(author, result)
+    update_user_wordle_stat(author, "LastGame")
+    return
+
+#Vérifie la présence d'un utilisateur dans la base de donnée Wordle
+def is_user_in_db(user: discord.User, table: str) -> bool:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = f"SELECT * FROM {table} WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    result : int = cursor.fetchone()
+    connexion.close()
+    if result:
+        return True
+    else:
+        return False
+
+#Ajoute un nouvel utilisateur avec des valeurs par défaut à la base de donnée Wordle
+def add_user_in_wordle_db(user: discord.User) -> int:
+    if (is_user_in_db(user, "Wordle")):
+        print(f"  {user.name} already stored in the database.")
+        return (0)
+    else:
+        connexion = sqlite3.connect('db_stats.sqlite')
+        cursor = connexion.cursor()
+        request : str = f"INSERT INTO Wordle VALUES ('{user.id}', 0, 0, 0, 0, '00000000')"
+        cursor.execute(request)
+        connexion.commit()
+        connexion.close()
+        if (is_user_in_db(user, "Wordle")):
+            print(f"  {user.name} added to Wordle database.")
+            return (1)
+        else:
+            print(f"  Error in the INSERT request.")
+            return (0)
+        
+#Met à jour une statistique spécifique du joueur dans la table Wordle
+def update_user_wordle_stat(user: discord.User, stat: str) -> None:
+    if (stat == "LastGame"):
+        date = get_parsed_date()
+        connexion = sqlite3.connect('db_stats.sqlite')
+        cursor = connexion.cursor()
+        request: str = f"UPDATE Wordle SET {stat}='{date}' WHERE User_ID='{user.id}'"
+        cursor.execute(request)
+        connexion.commit()
+        connexion.close()
+        return
+    elif (stat == "Played" or stat == "Victory" or stat == "Lose" or stat == "GiveUp"):
+        stat_value : int = int(get_user_wordle_stat(user, stat))
+        stat_value = stat_value + 1
+        connexion = sqlite3.connect('db_stats.sqlite')
+        cursor = connexion.cursor()
+        request: str = f"UPDATE Wordle SET {stat}='{stat_value}' WHERE User_ID='{user.id}'"
+        cursor.execute(request)
+        connexion.commit()
+        connexion.close()
+        return
+    else:
+        print(f"    Statistique {stat} introuvable dans la table Wordle.")
+        return
+
+#Récpère la valeur d'une statistique du joueur dans la table Wordle
+def get_user_wordle_stat(user: discord.User, stat: str) -> str:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request: str = f"SELECT {stat} FROM Wordle WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    connexion.commit()
+    value : str = str(cursor.fetchone()[0])
+    connexion.close()
+    return (value)
+
+#Récupère la date d'aujourd'hui et la renvoit sous forme de string de format DDMMYYYY
+def get_parsed_date() -> str:
+    today: str = datetime.date.today().isoformat()
+    day: str = f"{today[8]}{today[9]}"
+    month: str = f"{today[5]}{today[6]}"
+    year: str = f"{today[0]}{today[1]}{today[2]}{today[3]}"
+    return (f"{day}{month}{year}")
