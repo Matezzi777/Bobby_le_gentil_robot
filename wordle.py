@@ -181,3 +181,12 @@ def get_parsed_date() -> str:
     month: str = f"{today[5]}{today[6]}"
     year: str = f"{today[0]}{today[1]}{today[2]}{today[3]}"
     return (f"{day}{month}{year}")
+
+def display_wordle_user_stats(member: discord.Member) -> str:
+    Played: int = int(get_user_wordle_stat(member, "Played"))
+    Victory: int = int(get_user_wordle_stat(member, "Victory"))
+    Lose: int = int(get_user_wordle_stat(member, "Lose"))
+    GiveUp: int = int(get_user_wordle_stat(member, "GiveUp"))
+    LastGame: str = get_user_wordle_stat(member, "LastGame")
+    wordle_full_stats: str = f"`Parties jouées       ` : `{Played}`\n`Victoires            ` : `{Victory}`\n`Défaites             ` : `{Lose}`\n`Abandons             ` : `{GiveUp}`\n`Dernière partie jouée` : `{LastGame[0]}{LastGame[1]}/{LastGame[2]}{LastGame[3]}/{LastGame[4]}{LastGame[5]}{LastGame[6]}{LastGame[7]}`"
+    return (wordle_full_stats)

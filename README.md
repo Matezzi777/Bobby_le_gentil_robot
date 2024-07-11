@@ -9,7 +9,9 @@ Il dispose des commandes suivantes :
     - /civ_draft
     - /wordle
 - Commandes de message :
-    - repeat
+    - Repeat
+- Commandes d'utilisateur :
+    - Stats
 
 ## How to get Bobby on your server ?
 ### 1. Clone the project
@@ -30,7 +32,7 @@ touch config.py
 Edit the file as follow :
 ```py
 TOKEN : str = "your_bot_token"
-ID_ADMIN : int = "your_discord_id (integer)" 
+ID_ADMIN : int = "your_discord_id" 
 SERVERS : list[int] = ["id_server_1", "id_server_2", ...]
 VERSION : str = "X.X"
 ```

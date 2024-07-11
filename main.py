@@ -13,6 +13,7 @@
 #==================== INITIALISATION ====================
 import discord
 import discord.ui
+from discord import commands
 from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN, SERVERS
 from draft import *
@@ -173,6 +174,15 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     return await interaction.followup.send(embed=embed_response)
 
 #==================== USER COMMANDES ====================
+#Affiche les statistiques de cet utilisateur
+@bot.user_command(guild_ids=SERVERS, name="Stats")
+async def stats(interaction: discord.Interaction, member: discord.Member):
+    print(f"USER COMMAND : Stats used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    if (not is_user_in_db(member, "Wordle")):
+        add_user_in_wordle_db(member)
+    embed = BotEmbed(title="STATS", description=f"{member.mention}'s stats:")
+    embed.add_field(name="Wordle", value=display_wordle_user_stats(member))
+    return await interaction.response.send_message(embed=embed)
 
 #================== MESSAGES COMMANDES ==================
 #Répète un message
