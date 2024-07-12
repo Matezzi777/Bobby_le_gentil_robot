@@ -114,16 +114,19 @@ async def feedback(interaction: discord.Interaction):
 async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Option(int, "Le nombre de lettres du mot à deviner.", required=False, default=5), nb_essais: int = discord.Option(int, "Le nombre d'essais maximum pour deviner'.", required=False, default=6)):
     author : discord.Member = interaction.user
     print(f"COMMAND : /wordle used by @{author.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    #Affiche un embed pour le chargement
+    embed_waiting = BotEmbed(title="WORDLE", description="<a:icons8sablierfond:1261108677679780033> Je cherche un mot <a:icons8sablierfond:1261108677679780033>")
+    message = await interaction.response.send_message(embed=embed_waiting)
     #Trouve un mot du bon nombre de lettres
     mot: str = get_word(nb_lettres)
     print(f"    Mot à trouver : {mot}")
-    #Affiche la grille
+    #Prépare le jeu
     embed = BotEmbed(title="WORDLE", description=f"Essayez de trouver ce mot de {nb_lettres} lettres en moins de {nb_essais} essais.\nAttention à ne pas mettre d'accents !")
     embed_content : list[str] = initialize_embed_content(nb_lettres, nb_essais)
     embed.add_field(name="", value=get_str_from_list(embed_content), inline=False)
     embed.add_field(name="", value=f"**Encore {nb_essais} essais.\nEntrez *end_game* pour arrêter la partie.**", inline=False)
-    #Affiche le message initial
-    message = await interaction.response.send_message(embed=embed)
+    #Affiche par le jeu
+    await message.edit(embed=embed)
     i: int = 0
     while (i < nb_essais):
         #Attends pour une réponse
