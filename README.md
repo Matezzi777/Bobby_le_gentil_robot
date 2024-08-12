@@ -6,7 +6,7 @@ Il dispose des commandes suivantes :
     - /ping
     - /hello
     - /feedback
-    - /civ_draft
+    - /draft
     - /wordle
 - Commandes de message :
     - Repeat

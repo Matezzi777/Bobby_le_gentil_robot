@@ -18,6 +18,7 @@ from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN, SERVERS
 from draft import *
 from wordle import *
+from utils import *
 
 bot = Bot()
 
@@ -51,10 +52,10 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
-@bot.slash_command(guild_ids=SERVERS, name="civ_draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
-async def civ_draft(interaction: discord.Interaction,
+@bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
+async def draft(interaction: discord.Interaction,
                     nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
-    print(f"COMMAND : /civ_draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    print(f"COMMAND : /draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     author = interaction.user
     if (not author.voice):
         print(f"    - ERREUR : Le joueur doit se trouver dans un salon vocal.")
@@ -175,6 +176,15 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     embed_response = BotEmbed(title="WORDLE", colour=discord.Colour.red(), description=f"GAME OVER ! Le mot à trouver était {mot}.")
     update_wordle_stats(author, "Lose")
     return await interaction.followup.send(embed=embed_response)
+
+@bot.slash_command(guild_ids=SERVERS, name="head_or_tail", description="Lance une pièce.")
+async def head_or_tail(interaction: discord.Interaction):
+    embed=BotEmbed(title=random_pick(["HEAD (FACE)", "TAIL (PILE)"]))
+    return await interaction.response.send_message(embed=embed)
+
+#IDEES
+# Pierre feuille ciseau
+# Mapvote civ
 
 #==================== USER COMMANDES ====================
 #Affiche les statistiques de cet utilisateur
