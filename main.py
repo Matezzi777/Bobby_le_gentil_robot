@@ -182,6 +182,10 @@ async def head_or_tail(interaction: discord.Interaction):
     embed=BotEmbed(title=random_pick(["HEAD (FACE)", "TAIL (PILE)"]))
     return await interaction.response.send_message(embed=embed)
 
+@bot.slash_command(guild_ids=SERVERS, name="test", description="Commande de test. Cette commande est régulièrement modifiée.")
+async def test(interaction: discord.Interaction):
+    return await interaction.response.send_message(embed=BotEmbed(title="TEST", description=f"<:player_idle_down:1272933149600514150>"))
+
 #IDEES
 # Pierre feuille ciseau
 # Mapvote civ
