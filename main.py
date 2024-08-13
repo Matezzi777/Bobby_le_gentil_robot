@@ -13,7 +13,6 @@
 #==================== INITIALISATION ====================
 import discord
 import discord.ui
-from discord import commands
 from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN, SERVERS
 from draft import *
