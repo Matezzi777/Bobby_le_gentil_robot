@@ -54,8 +54,7 @@ async def hello(interaction: discord.Interaction):
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
 @bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue des drafts pour Civilization VI.")
-async def draft(interaction: discord.Interaction,
-                    nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
+async def draft(interaction: discord.Interaction, nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
     print(f"COMMAND : /draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     author = interaction.user
     if (not author.voice):
@@ -107,6 +106,7 @@ async def draft(interaction: discord.Interaction,
 
 @bot.slash_command(guild_ids=SERVERS, name="mapvote", description="Crée un mapvote pour Civilization VI.")
 async def mapvote(interaction: discord.Interaction):
+    print(f"COMMAND : /mapvote used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await make_mapvote(interaction)
 
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
@@ -184,11 +184,11 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
 
 @bot.slash_command(guild_ids=SERVERS, name="head_or_tail", description="Lance une pièce.")
 async def head_or_tail(interaction: discord.Interaction):
+    print(f"COMMAND : /head_or_tail used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await interaction.response.send_message(embed=BotEmbed(title=random_pick_str(["HEAD (FACE)", "TAIL (PILE)"])))
 
 #IDEES
 # Pierre feuille ciseau
-# Mapvote civ
 
 #==================== USER COMMANDES ====================
 #Affiche les statistiques de cet utilisateur
