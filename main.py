@@ -17,6 +17,7 @@ from discord import commands
 from classes import Bot, BotEmbed, FeedbackForm
 from config import TOKEN, SERVERS
 from draft import *
+from mapvote import *
 from wordle import *
 from utils import *
 
@@ -52,7 +53,7 @@ async def hello(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
-@bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue aléatoirement des leaders aux joueurs dans le salon vocal.")
+@bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue des drafts pour Civilization VI.")
 async def draft(interaction: discord.Interaction,
                     nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
     print(f"COMMAND : /draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
@@ -104,11 +105,15 @@ async def draft(interaction: discord.Interaction,
         await interaction.response.send_message(message)
         return await interaction.followup.send(embed=embed_draft)
 
+@bot.slash_command(guild_ids=SERVERS, name="mapvote", description="Crée un mapvote pour Civilization VI.")
+async def mapvote(interaction: discord.Interaction):
+    return await make_mapvote(interaction)
+
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
 @bot.slash_command(guild_ids=SERVERS, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
 async def feedback(interaction: discord.Interaction):
     print(f"COMMAND : /feedback used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
-    await interaction.response.send_modal(FeedbackForm())
+    return await interaction.response.send_modal(FeedbackForm())
 
 #Lance une partie de Wordle
 @bot.slash_command(guild_ids=SERVERS, name="wordle", description="Lance une partie de Wordle.")
@@ -179,8 +184,7 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
 
 @bot.slash_command(guild_ids=SERVERS, name="head_or_tail", description="Lance une pièce.")
 async def head_or_tail(interaction: discord.Interaction):
-    embed=BotEmbed(title=random_pick(["HEAD (FACE)", "TAIL (PILE)"]))
-    return await interaction.response.send_message(embed=embed)
+    return await interaction.response.send_message(embed=BotEmbed(title=random_pick_str(["HEAD (FACE)", "TAIL (PILE)"])))
 
 #IDEES
 # Pierre feuille ciseau

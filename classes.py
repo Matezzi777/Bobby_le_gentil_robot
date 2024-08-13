@@ -26,6 +26,19 @@ class BotEmbed(discord.Embed):
             timestamp=timestamp)
         self.set_footer(text=f"Bobby v{VERSION}")
 
+class ErrorEmbed(discord.Embed):
+    def __init__(self, *, colour=discord.Colour.red, color=discord.Colour.red, title="ERROR", type='rich', url=None, description=None, timestamp=None) -> None:
+        super().__init__(
+            colour=colour,
+            color=color,
+            title=title,
+            type=type,
+            url=url,
+            description=description,
+            timestamp=timestamp
+            )
+        self.set_footer(text=f"Bobby v{VERSION}")
+
 #======================== MODALS ========================
 
 class FeedbackForm(discord.ui.Modal):
