@@ -24,7 +24,7 @@ class BotEmbed(discord.Embed):
             timestamp=timestamp)
         self.set_footer(text=f"Bobby v{VERSION}")
 class ErrorEmbed(discord.Embed):
-    def __init__(self, *, colour=discord.Colour.red, color=discord.Colour.red, title="ERROR", type='rich', url=None, description=None, timestamp=None) -> None:
+    def __init__(self, *, colour=discord.Colour.red(), color=discord.Colour.red(), title="ERROR", type='rich', url=None, description=None, timestamp=None) -> None:
         super().__init__(
             colour=colour,
             color=color,
@@ -36,7 +36,7 @@ class ErrorEmbed(discord.Embed):
             )
         self.set_footer(text=f"Bobby v{VERSION}")
 class SuccessEmbed(discord.Embed):
-    def __init__(self, *, colour=discord.Colour.green, color=discord.Colour.green, title="ERROR", type='rich', url=None, description=None, timestamp=None) -> None:
+    def __init__(self, *, colour=discord.Colour.green(), color=discord.Colour.green(), title="ERROR", type='rich', url=None, description=None, timestamp=None) -> None:
         super().__init__(
             colour=colour,
             color=color,

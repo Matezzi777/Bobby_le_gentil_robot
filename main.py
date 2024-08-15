@@ -20,10 +20,9 @@ from mapvote import *
 from wordle import *
 from utils import *
 from civilization import *
+from rock_paper_scissors import *
 
 bot = Bot()
-
-#====================== CONSTANTES ======================
 
 #======================== EVENTS ========================
 @bot.event
@@ -36,6 +35,8 @@ async def on_ready():
     print("    /______/ /_____/ /______/ /______/    /_/         /______/ /_____/         /_/  /_/ /_____/ /______/ /_____/    /_/")
     return print(f"\n... est connecté.\nRock n'Roll !\n")
 
+
+
 #=================== SLASH COMMANDES ====================
 #Renvoit PONG si le bot est connecté
 @bot.slash_command(guild_ids=SERVERS, name="ping", description="PONG !")
@@ -44,14 +45,12 @@ async def ping(interaction: discord.Interaction):
     embed = BotEmbed(title="PONG", colour=discord.Colour.green())
     embed.remove_footer()
     await interaction.response.send_message(embed=embed, ephemeral=True)
-
 #Renvoit une présentation du bot
 @bot.slash_command(guild_ids=SERVERS, name="hello", description="Dis bonjour !")
 async def hello(interaction: discord.Interaction):
     print(f"COMMAND : /hello used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI, jouer à Wordle ou garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible [ici](https://github.com/Matezzi777/Bobby_le_gentil_robot).\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
     await interaction.response.send_message(embed=embed, ephemeral=True)
-
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
 @bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue des drafts pour Civilization VI.")
 async def draft(interaction: discord.Interaction, nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
@@ -103,18 +102,15 @@ async def draft(interaction: discord.Interaction, nb_leaders = discord.Option(in
         print(f"    - SUCCES : Drafts distribuées.")
         await interaction.response.send_message(message)
         return await interaction.followup.send(embed=embed_draft)
-
 @bot.slash_command(guild_ids=SERVERS, name="mapvote", description="Crée un mapvote pour Civilization VI.")
 async def mapvote(interaction: discord.Interaction):
     print(f"COMMAND : /mapvote used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await make_mapvote(interaction)
-
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
 @bot.slash_command(guild_ids=SERVERS, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
 async def feedback(interaction: discord.Interaction):
     print(f"COMMAND : /feedback used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await interaction.response.send_modal(FeedbackForm())
-
 #Lance une partie de Wordle
 @bot.slash_command(guild_ids=SERVERS, name="wordle", description="Lance une partie de Wordle.")
 async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Option(int, "Le nombre de lettres du mot à deviner.", required=False, default=5), nb_essais: int = discord.Option(int, "Le nombre d'essais maximum pour deviner'.", required=False, default=6)):
@@ -181,13 +177,11 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     embed_response = BotEmbed(title="WORDLE", colour=discord.Colour.red(), description=f"GAME OVER ! Le mot à trouver était {mot}.")
     update_wordle_stats(author, "Lose")
     return await interaction.followup.send(embed=embed_response)
-
 #Lance une pièce
 @bot.slash_command(guild_ids=SERVERS, name="head_or_tail", description="Lance une pièce.")
 async def head_or_tail(interaction: discord.Interaction):
     print(f"COMMAND : /head_or_tail used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await interaction.response.send_message(embed=BotEmbed(title=random_pick_str(["HEAD (FACE)", "TAIL (PILE)"])))
-
 #Commande de test
 @bot.slash_command(guild_ids=SERVERS, name="report", description="Report a Civilization VI game result.")
 async def report(interaction: discord.Interaction,
@@ -210,12 +204,11 @@ async def report(interaction: discord.Interaction,
     embed = BotEmbed(title="REPORT", description=f"Please follow the process to complete the report of this game for *{len(players)} players*.")
     await interaction.response.send_message(embed=embed, view=ReportView(embed, players))
 
-#IDEES
-# Pierre feuille ciseau
+
 
 #==================== USER COMMANDES ====================
 #Affiche les statistiques de cet utilisateur
-@bot.user_command(guild_ids=SERVERS, name="Stats")
+@bot.user_command(guild_ids=SERVERS, name="Stats", description="Display the user's stats on games supported by Bobby.")
 async def stats(interaction: discord.Interaction, member: discord.Member):
     print(f"USER COMMAND : Stats used by @{interaction.user.name} on {member.name} in {interaction.guild.name} (#{interaction.channel.name})")
     if (not is_user_in_db(member, "Wordle")):
@@ -227,6 +220,19 @@ async def stats(interaction: discord.Interaction, member: discord.Member):
     embed.add_field(name="**========== Wordle ===========**", value=display_wordle_user_stats(member), inline=False)
     return await interaction.response.send_message(embed=embed)
 
+
+
+#Pierre-Feuille-Ciseaux
+@bot.user_command(guild_ids=SERVERS, name="Rock Paper Scissors", description="Challenge someone to a Rock Paper Scissors.")
+async def rock_paper_scissors(interaction: discord.Interaction, member: discord.Member):
+    print(f"USER COMMAND : Rock Paper Scissors used by @{interaction.user.name} on {member.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    channel: discord.TextChannel = interaction.channel
+    view_player1 = RPC_Player1View(player2=member, channel=channel)
+    embed_player1 = BotEmbed(title=f"YOU'RE ABOUT TO CHALLENGE @{member.name.upper()}", description=f"You're about to send a *Rock Paper Scissors* challenge to **@{member.name}**.")
+    await interaction.response.send_message(embed=embed_player1, view=view_player1, ephemeral=True)
+
+
+
 #================== MESSAGES COMMANDES ==================
 #Répète un message
 @bot.message_command(guild_ids=SERVERS, name="repeat")
@@ -237,6 +243,8 @@ async def repeat(interaction : discord.Interaction, message : discord.Message):
     return await interaction.response.send_message(embed=embed)
 
 #Traduis un message
+
+
 
 #========================= RUN ==========================
 bot.run(TOKEN)
