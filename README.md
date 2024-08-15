@@ -24,6 +24,7 @@ source venv/bin/activate
 ### 3. Add the needed libraries
 ```sh
 pip install py-cord
+pip install sqlite3
 ```
 ### 4. Create config.py file
 ```sh

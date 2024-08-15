@@ -4,7 +4,6 @@ import datetime
 def random_pick_str(liste:list[str]) -> str:
 	return (liste[random.randint(0, len(liste)-1)])
 
-#Récupère la date d'aujourd'hui et la renvoit sous forme de string de format DDMMYYYY
 def get_parsed_date() -> str:
     today: str = datetime.date.today().isoformat()
     day: str = f"{today[8]}{today[9]}"

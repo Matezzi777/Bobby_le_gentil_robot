@@ -219,7 +219,7 @@ async def report(interaction: discord.Interaction,
 #Affiche les statistiques de cet utilisateur
 @bot.user_command(guild_ids=SERVERS, name="Stats")
 async def stats(interaction: discord.Interaction, member: discord.Member):
-    print(f"USER COMMAND : Stats used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    print(f"USER COMMAND : Stats used by @{interaction.user.name} on {member.name} in {interaction.guild.name} (#{interaction.channel.name})")
     if (not is_user_in_db(member, "Wordle")):
         add_user_in_wordle_db(member)
     if (not is_user_in_db(member, "CivilizationVI")):
