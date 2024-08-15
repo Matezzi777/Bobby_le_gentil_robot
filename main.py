@@ -19,6 +19,7 @@ from draft import *
 from mapvote import *
 from wordle import *
 from utils import *
+from civilization import *
 
 bot = Bot()
 
@@ -34,6 +35,8 @@ async def on_ready():
     print("     / /__/ / / /_/ / / /__/ / / /__/ /    / /         / /____  / /___          / /  | | / /_/ / / /__/ / / /_/ /    / /")
     print("    /______/ /_____/ /______/ /______/    /_/         /______/ /_____/         /_/  /_/ /_____/ /______/ /_____/    /_/")
     return print(f"\n... est connecté.\nRock n'Roll !\n")
+
+
 
 #=================== SLASH COMMANDES ====================
 #Renvoit PONG si le bot est connecté
@@ -181,10 +184,32 @@ async def wordle(interaction: discord.Interaction, nb_lettres: int = discord.Opt
     update_wordle_stats(author, "Lose")
     return await interaction.followup.send(embed=embed_response)
 
+#Lance une pièce
 @bot.slash_command(guild_ids=SERVERS, name="head_or_tail", description="Lance une pièce.")
 async def head_or_tail(interaction: discord.Interaction):
     print(f"COMMAND : /head_or_tail used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     return await interaction.response.send_message(embed=BotEmbed(title=random_pick_str(["HEAD (FACE)", "TAIL (PILE)"])))
+
+#Commande de test
+@bot.slash_command(guild_ids=SERVERS, name="report", description="Report a Civilization VI game result.")
+async def report(interaction: discord.Interaction,
+               p1: discord.Member = discord.Option(discord.Member, description="Joueur 1", required=True),
+               p2: discord.Member = discord.Option(discord.Member, description="Joueur 2", required=True),
+               p3: discord.Member = discord.Option(discord.Member, description="Joueur 3", required=False, default=None),
+               p4: discord.Member = discord.Option(discord.Member, description="Joueur 4", required=False, default=None),
+               p5: discord.Member = discord.Option(discord.Member, description="Joueur 5", required=False, default=None),
+               p6: discord.Member = discord.Option(discord.Member, description="Joueur 6", required=False, default=None),
+               p7: discord.Member = discord.Option(discord.Member, description="Joueur 7", required=False, default=None),
+               p8: discord.Member = discord.Option(discord.Member, description="Joueur 8", required=False, default=None)):
+    field_value: str = ""
+    args: list[discord.Member] = [p1, p2, p3, p4, p5, p6, p7, p8]
+    players: list[discord.Member] = []
+    for user in args:
+        if ((user != None) and (not user in players)):
+            players.append(user)
+            field_value = f"{field_value}- {user.mention}\n"
+    embed = BotEmbed(title="REPORT", description=f"Please follow the process to complete the report of this game for *{len(players)} players*.")
+    await interaction.response.send_message(embed=embed, view=ReportView(embed, players))
 
 #IDEES
 # Pierre feuille ciseau
