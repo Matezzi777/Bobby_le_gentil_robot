@@ -1,7 +1,7 @@
 import random
 import sqlite3
-import datetime
 import discord
+from utils import *
 
 #Tire un mot au hasard du nombre de lettres spécifié
 def get_word(nb_lettres: int) -> str:
@@ -173,14 +173,6 @@ def get_user_wordle_stat(user: discord.User, stat: str) -> str:
     value : str = str(cursor.fetchone()[0])
     connexion.close()
     return (value)
-
-#Récupère la date d'aujourd'hui et la renvoit sous forme de string de format DDMMYYYY
-def get_parsed_date() -> str:
-    today: str = datetime.date.today().isoformat()
-    day: str = f"{today[8]}{today[9]}"
-    month: str = f"{today[5]}{today[6]}"
-    year: str = f"{today[0]}{today[1]}{today[2]}{today[3]}"
-    return (f"{day}{month}{year}")
 
 def display_wordle_user_stats(member: discord.Member) -> str:
     Played: int = int(get_user_wordle_stat(member, "Played"))
