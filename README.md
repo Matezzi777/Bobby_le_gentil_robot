@@ -1,13 +1,18 @@
 # Bobby le robot gentil est là !
 
 Bobby le robot gentil est à votre service !
-Il dispose des commandes suivantes :
+Il dispose des composantes suivantes :
+- Events :
+    - on_ready()
 - Slash commandes :
     - /ping
     - /hello
-    - /feedback
     - /draft
+    - /mapvote
+    - /feedback
     - /wordle
+    - /head_or_tail
+    - /report
 - Commandes de message :
     - Repeat
 - Commandes d'utilisateur :
