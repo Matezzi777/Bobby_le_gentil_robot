@@ -122,7 +122,7 @@ def is_user_in_db(user: discord.User, table: str) -> bool:
 #Ajoute un nouvel utilisateur avec des valeurs par défaut à la base de donnée Wordle
 def add_user_in_wordle_db(user: discord.User) -> int:
     if (is_user_in_db(user, "Wordle")):
-        print(f"  {user.name} already stored in the database.")
+        print(f"    {user.name} already stored in the database.")
         return (0)
     else:
         connexion = sqlite3.connect('db_stats.sqlite')
@@ -132,10 +132,10 @@ def add_user_in_wordle_db(user: discord.User) -> int:
         connexion.commit()
         connexion.close()
         if (is_user_in_db(user, "Wordle")):
-            print(f"  {user.name} added to Wordle database.")
+            print(f"    {user.name} added to Wordle database.")
             return (1)
         else:
-            print(f"  Error in the INSERT request.")
+            print(f"    Error in the INSERT request.")
             return (0)
         
 #Met à jour une statistique spécifique du joueur dans la table Wordle
