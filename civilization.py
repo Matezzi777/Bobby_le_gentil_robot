@@ -26,7 +26,7 @@ class SelectPlayer(discord.ui.Select):
         for player in players:
             self.add_option(label=f"@{player.name}", value=f"{player.id}", description=f"Select @{player.name} as top{n}.")
 
-    async def callback(self,  interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         chosen_member: discord.Member = interaction.guild.get_member(int(self.values[0]))
         self.view.result.append(chosen_member)
         self.view.players.remove(chosen_member)
