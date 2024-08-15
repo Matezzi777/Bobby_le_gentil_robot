@@ -201,6 +201,7 @@ async def report(interaction: discord.Interaction,
                p6: discord.Member = discord.Option(discord.Member, description="Joueur 6", required=False, default=None),
                p7: discord.Member = discord.Option(discord.Member, description="Joueur 7", required=False, default=None),
                p8: discord.Member = discord.Option(discord.Member, description="Joueur 8", required=False, default=None)):
+    print(f"COMMAND : /report used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     field_value: str = ""
     args: list[discord.Member] = [p1, p2, p3, p4, p5, p6, p7, p8]
     players: list[discord.Member] = []
