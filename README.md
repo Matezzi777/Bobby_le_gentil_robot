@@ -17,6 +17,7 @@ Il dispose des composantes suivantes :
     - Repeat
 - Commandes d'utilisateur :
     - Stats
+    - Rock Paper Scissors
 
 ## How to get Bobby on your server ?
 ### 1. Clone the project
