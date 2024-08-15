@@ -36,8 +36,6 @@ async def on_ready():
     print("    /______/ /_____/ /______/ /______/    /_/         /______/ /_____/         /_/  /_/ /_____/ /______/ /_____/    /_/")
     return print(f"\n... est connecté.\nRock n'Roll !\n")
 
-
-
 #=================== SLASH COMMANDES ====================
 #Renvoit PONG si le bot est connecté
 @bot.slash_command(guild_ids=SERVERS, name="ping", description="PONG !")
