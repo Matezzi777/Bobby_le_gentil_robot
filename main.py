@@ -222,8 +222,11 @@ async def stats(interaction: discord.Interaction, member: discord.Member):
     print(f"USER COMMAND : Stats used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     if (not is_user_in_db(member, "Wordle")):
         add_user_in_wordle_db(member)
+    if (not is_user_in_db(member, "CivilizationVI")):
+        add_user_in_civ_database(member)
     embed = BotEmbed(title="STATS", description=f"{member.mention}'s stats:")
-    embed.add_field(name="Wordle", value=display_wordle_user_stats(member))
+    embed.add_field(name="**======= Civilization VI ========**", value=display_civ_user_stats(member), inline=False)
+    embed.add_field(name="**========== Wordle ===========**", value=display_wordle_user_stats(member), inline=False)
     return await interaction.response.send_message(embed=embed)
 
 #================== MESSAGES COMMANDES ==================

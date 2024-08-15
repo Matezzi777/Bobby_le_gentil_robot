@@ -100,7 +100,7 @@ def store_report(users: list[discord.Member]):
     actual_elos: list[int] = []
     for user in users: #Vérifie la présence de chaque utilisateur dans la base de données
         if (not is_player_in_civ_database(user)):
-            add_user_to_civ_database(user)
+            add_user_in_civ_database(user)
         actual_elos.append(get_civ_elo(user))
     i: int = 0
     while (i < nb_players): #Mets à jours les Top1, Wins, Lost et Date
@@ -147,6 +147,15 @@ def store_report(users: list[discord.Member]):
         i += 1
     print(f"    Players' statistics updated.")
 
+def display_civ_user_stats(user: discord.Member) -> str:
+    rank: int = get_civ_rank(user)
+    elo: int = get_civ_elo(user)
+    top: int = get_civ_top1(user)
+    wins: int = get_civ_wins(user)
+    lost: int = get_civ_lost(user)
+    date: str = get_civ_date(user)
+    string: str = f"`Rank                 ` : `{rank}`\n`Elo                  ` : `{elo}`\n`Parties jouées       ` : `{wins+lost}`\n`Top 1                ` : `{top}`\n`Victoires            ` : `{wins}`\n`Défaites             ` : `{lost}`\n`Dernière partie jouée` : `{date[0]}{date[1]}/{date[2]}{date[3]}/{date[4]}{date[5]}{date[6]}{date[7]}`"
+    return (string)
 
 ############ FONCTIONS UTILITAIRES ############
 def is_player_in_civ_database(user: discord.Member) -> bool:
@@ -160,14 +169,14 @@ def is_player_in_civ_database(user: discord.Member) -> bool:
         return True
     else:
         return False
-def add_user_to_civ_database(user: discord.Member) -> int:
+def add_user_in_civ_database(user: discord.Member) -> int:
     if (is_player_in_civ_database(user)):
         print(f"    {user.name} already stored in the database.")
         return (0)
     else:
         connexion = sqlite3.connect('db_stats.sqlite')
         cursor = connexion.cursor()
-        request : str = f"INSERT INTO CivilizationVI VALUES ('{user.id}', {ELO_NEW_PLAYER}, 0, 0, 0, 0)"
+        request : str = f"INSERT INTO CivilizationVI VALUES ('{user.id}', {ELO_NEW_PLAYER}, 0, 0, 0, '00000000')"
         cursor.execute(request)
         connexion.commit()
         connexion.close()
@@ -198,6 +207,57 @@ def get_civ_elo(user: discord.Member) -> int:
     result : int = cursor.fetchone()[0]
     connexion.close()
     return (result)
+def get_civ_top1(user : discord.Member) -> int:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = f"SELECT Top1 FROM CivilizationVI WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    connexion.commit()
+    result : int = cursor.fetchone()[0]
+    connexion.close()
+    return (result)
+def get_civ_wins(user : discord.Member) -> int:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = f"SELECT Wins FROM CivilizationVI WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    connexion.commit()
+    result : int = cursor.fetchone()[0]
+    connexion.close()
+    return (result)
+def get_civ_lost(user : discord.Member) -> int:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = f"SELECT Lost FROM CivilizationVI WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    connexion.commit()
+    result : int = cursor.fetchone()[0]
+    connexion.close()
+    return (result)
+def get_civ_date(user : discord.Member) -> str:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = f"SELECT Date FROM CivilizationVI WHERE User_ID='{user.id}'"
+    cursor.execute(request)
+    connexion.commit()
+    result : str = str(cursor.fetchone()[0])
+    connexion.close()
+    return (result)
+def get_civ_rank(user : discord.Member) -> int:
+    connexion = sqlite3.connect('db_stats.sqlite')
+    cursor = connexion.cursor()
+    request : str = "SELECT User_ID, Elo, Top1, Wins, Lost FROM CivilizationVI ORDER BY Elo DESC"
+    cursor.execute(request)
+    connexion.commit()
+    result : list = cursor.fetchall()
+    connexion.close()
+    rank : int = 0
+    while (rank < len(result)):
+        user_id = result[rank][0]
+        if (int(user_id) == int(user.id)):
+            return (rank+1)
+        rank = rank + 1
+    return (-1)
 def update_civ_top1(user: discord.Member) -> None:
     connexion = sqlite3.connect("db_stats.sqlite")
     cursor = connexion.cursor()
