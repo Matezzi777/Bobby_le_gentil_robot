@@ -120,7 +120,6 @@ class BCY(discord.ui.View):
         self.add_item(Choice(emoji="⭐", label_content="Cap Only", list_users=users, needed_confirm=self.needed_confirm))
         self.add_item(Choice(emoji="🏙️", label_content="All Cities", list_users=users, needed_confirm=self.needed_confirm))
         self.add_item(Generic_NO(label_content="OFF", list_users=users, needed_confirm=self.needed_confirm))
-
 class Maps(discord.ui.View):
     def __init__(self, users) -> None:
         super().__init__(timeout=None)
@@ -131,7 +130,6 @@ class Maps(discord.ui.View):
         self.add_item(Choice(emoji="🌍", label_content="Continents", list_users=users, needed_confirm=self.needed_confirm))
         self.add_item(Choice(emoji="⛵", label_content="Lakes", list_users=users, needed_confirm=self.needed_confirm))
         self.add_item(Choice(emoji="🗺️", label_content="TSL (True Start Locations)", list_users=users, needed_confirm=self.needed_confirm))
-
 class Barbarians(discord.ui.View):
     def __init__(self, users) -> None:
         super().__init__(timeout=None)

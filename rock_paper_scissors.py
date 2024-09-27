@@ -8,7 +8,6 @@ class RPC_Player1View(discord.ui.View):
         self.player2: discord.Member = player2
         self.channel: discord.TextChannel = channel
         self.add_item(RPC_Select1())
-
 class RPC_Select1(discord.ui.Select):
     def __init__(self):
         super().__init__(placeholder="Make your choice..")
@@ -31,8 +30,6 @@ class RPC_Select1(discord.ui.Select):
             embed = SuccessEmbed(title=f"CHALLENGE SENT TO @{player2.name.upper()}")
             await interaction.response.edit_message(embed=embed, view=None)
             return self.view.stop()
-
-
 class RPC_Player2View(discord.ui.View):
     def __init__(self, player1: discord.User, player2: discord.Member, choice_player1: str, channel: discord.TextChannel):
         super().__init__(timeout=None)
@@ -41,7 +38,6 @@ class RPC_Player2View(discord.ui.View):
         self.choice_player1: str = choice_player1
         self.channel: discord.TextChannel = channel
         self.add_item(RPC_Select2())
-
 class RPC_Select2(discord.ui.Select):
     def __init__(self):
         super().__init__(placeholder="Make your choice..")
@@ -142,7 +138,6 @@ class RPC_Select2(discord.ui.Select):
                     await player1.send(content="SOMETHING WEIRD HAPPENED ! CHECK THE LOGS !", view=None)
                     await interaction.response.edit_message(content="SOMETHING WEIRD HAPPENED ! CHECK THE LOGS !", view=None)
                     return self.view.stop()
-
 
 def get_rpc_emote_from_choice(choice: str) -> str:
     if (choice == "R"):

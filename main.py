@@ -219,9 +219,6 @@ async def stats(interaction: discord.Interaction, member: discord.Member):
     embed.add_field(name="**======= Civilization VI ========**", value=display_civ_user_stats(member), inline=False)
     embed.add_field(name="**========== Wordle ===========**", value=display_wordle_user_stats(member), inline=False)
     return await interaction.response.send_message(embed=embed)
-
-
-
 #Pierre-Feuille-Ciseaux
 @bot.user_command(guild_ids=SERVERS, name="Rock Paper Scissors", description="Challenge someone to a Rock Paper Scissors.")
 async def rock_paper_scissors(interaction: discord.Interaction, member: discord.Member):
@@ -241,8 +238,6 @@ async def repeat(interaction : discord.Interaction, message : discord.Message):
     embed = BotEmbed(title="REPEAT", description=f"{message.created_at}")
     embed.add_field(name=f"", value=f"**{message.author.mention} said :**\n{message.content}")
     return await interaction.response.send_message(embed=embed)
-
-#Traduis un message
 
 
 
