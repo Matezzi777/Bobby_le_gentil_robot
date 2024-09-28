@@ -51,6 +51,31 @@ async def hello(interaction: discord.Interaction):
     print(f"COMMAND : /hello used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="SALUTATIONS", description=f"Bonjour maître {interaction.user.mention} !\nC'est un plaisir de faire votre connaissance !\n\nN'hésitez pas à faire appel à moi pour préparer vos parties de Civilization VI, jouer à Wordle ou garder une trace de vos résultats et de vos statistiques dans différent jeux.\n\nMon code est accessible [ici](https://github.com/Matezzi777/Bobby_le_gentil_robot).\n\nSi vous avez une idée pour m'améliorer, utilisez la commande ***/feedback*** pour faire une suggestion !")
     await interaction.response.send_message(embed=embed, ephemeral=True)
+#Donnes des informations sur le serveur
+@bot.slash_command(guild_ids = SERVERS, name="serverinfo", description="Donne des informations sur le serveur actuel.")
+async def serverinfo(interaction: discord.Interaction):
+    print(f"COMMAND : /serverinfo used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
+    guild :discord.Guild = interaction.guild
+    id :str = f"{guild.id}"
+    owner :str = f"@{guild.owner.name}"
+    description = guild.description
+    nb_members :str = f"{guild.member_count}"
+    nsfw_lvl :str = f"{guild.nsfw_level.name}"
+    content_filter :str = f"{guild.explicit_content_filter.name}"
+    verif_lvl :str = f"{guild.verification_level.name}"
+    afk_channel = guild.afk_channel
+    embed = BotEmbed(title="SERVER INFO", description=f"Some informations about **{interaction.guild.name}**.")
+    embed.add_field(name="ID :", value=id, inline=False)
+    embed.add_field(name="Owner :", value=owner, inline=False)
+    if (description):
+        embed.add_field(name="Description :", value=description, inline=False)
+    embed.add_field(name="Members :", value=nb_members, inline=False)
+    embed.add_field(name="NSFW Level :", value=nsfw_lvl, inline=False)
+    embed.add_field(name="Content Filter Level :", value=content_filter, inline=False)
+    embed.add_field(name="Verification Level :", value=verif_lvl, inline=False)
+    if (afk_channel):
+        embed.add_field(name="AFK Channel :", value=afk_channel, inline=False)
+    return await interaction.response.send_message(embed=embed, ephemeral=True)
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
 @bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue des drafts pour Civilization VI.")
 async def draft(interaction: discord.Interaction, nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
