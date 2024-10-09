@@ -78,59 +78,95 @@ async def serverinfo(interaction: discord.Interaction):
     return await interaction.response.send_message(embed=embed, ephemeral=True)
 #Distribue des leaders de civilization vi aux joueurs présents dans le salon vocal
 @bot.slash_command(guild_ids=SERVERS, name="draft", description="Distribue des drafts pour Civilization VI.")
-async def draft(interaction: discord.Interaction, nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
+async def draft(interaction: discord.Interaction, nb_players = discord.Option(int, "Le nombre de joueurs.", required=False, default=0), nb_leaders = discord.Option(int, "Le nombre de leaders à distribuer à chaque joueur.", required=False, default=10)):
     print(f"COMMAND : /draft used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     author = interaction.user
     if (not author.voice):
-        print(f"    - ERREUR : Le joueur doit se trouver dans un salon vocal.")
-        missing_voice_embed = BotEmbed(title=f"PLEASE JOIN A VOICE CHANNEL", description=f"Veuillez rejoindre un salon vocal avec les autres joueurs avant de réutiliser cette commande pour recevoir les drafts.")
-        return await interaction.response.send_message(embed=missing_voice_embed, ephemeral=True)
+        if (nb_players == 0):
+            print(f"    - ERREUR : Le joueur doit se trouver dans un salon vocal.")
+            missing_voice_embed = BotEmbed(title=f"PLEASE JOIN A VOICE CHANNEL", description=f"Veuillez rejoindre un salon vocal avec les autres joueurs avant de réutiliser cette commande pour recevoir les drafts.")
+            return await interaction.response.send_message(embed=missing_voice_embed, ephemeral=True)
+        else:
+            if (nb_players < 2): #S'il n'y a pas assez de joueurs
+                print(f"    - ERREUR : Nombre de joueurs insuffisant.")
+                embed = BotEmbed(title=f"ERREUR", description=f"Au minimum 2 joueurs sont nécessaires pour générer une draft. Demandez aux autres joueurs de rejoindre votre salon vocal.", colour=discord.Colour.red())
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif (nb_players > 25): #S'il y a trop de joueurs
+                print(f"    - ERREUR : Nombre de joueurs trop élevé.")
+                embed = BotEmbed(title=f"ERREUR", description=f"Les drafts ne supportent que 25 joueurs au maximum.", colour=discord.Colour.red())
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif (nb_leaders > 15): #Si le nombre de leaders demandé est trop grand
+                print(f"    - ERREUR : Nombre de leaders trop élevé.")
+                embed = BotEmbed(title=f"ERREUR", description=f"Trop de leaders par joueur demandés (max. 15).", colour=discord.Colour.red())
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif (nb_players * nb_leaders > 77): #S'il n'y a pas assez de leaders dans le jeu pour en fournir assez à chaque joueur
+                print(f"    - ERREUR : Pas assez de leaders pour fournir tous les joueurs.")
+                embed = BotEmbed(title=f"ERREUR", description=f"Le jeu ne comporte pas assez de leaders différents pour en fournir {nb_leaders} à {nb_players} joueurs.", colour=discord.Colour.red())
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            else:
+                i :int = 0
+                message :str = ""
+                draft = create_draft(nb_players, nb_leaders)
+                embed = BotEmbed(title="DRAFT")
+                while (i < nb_players):
+                    k : int = 0
+                    field_value : str = f"**Player {i + 1} :**\n"
+                    while (k < nb_leaders):
+                        field_value = field_value + f"{emote_from_id(draft[i*nb_leaders+k])} {leader_from_id(draft[i*nb_leaders+k])}\n"
+                        k = k + 1
+                    field_value = field_value[:-1]
+                    embed.add_field(name=f"", value=field_value)
+                    i = i + 1
+                return await interaction.response.send_message(embed=embed)
     else:
         channel = author.voice.channel
         players = channel.members
-
-    nb_players = len(players)
-    if (nb_players < 2): #S'il n'y a pas assez de joueurs
-        print(f"    - ERREUR : Nombre de joueurs insuffisant.")
-        embed = BotEmbed(title=f"ERREUR", description=f"Au minimum 2 joueurs sont nécessaires pour générer une draft. Demandez aux autres joueurs de rejoindre votre salon vocal.", colour=discord.Colour.red())
-        return await interaction.response.send_message(embed=embed, ephemeral=True)
-    elif (nb_players > 25): #S'il y a trop de joueurs
-        print(f"    - ERREUR : Nombre de joueurs trop élevé.")
-        embed = BotEmbed(title=f"ERREUR", description=f"Les drafts ne supportent que 25 joueurs au maximum.", colour=discord.Colour.red())
-        return await interaction.response.send_message(embed=embed, ephemeral=True)
-    elif (nb_leaders > 15): #Si le nombre de leaders demandé est trop grand
-        print(f"    - ERREUR : Nombre de leaders trop élevé.")
-        embed = BotEmbed(title=f"ERREUR", description=f"Trop de leaders par joueur demandés (max. 15).", colour=discord.Colour.red())
-        return await interaction.response.send_message(embed=embed, ephemeral=True)
-    elif (nb_players * nb_leaders > 77): #S'il n'y a pas assez de leaders dans le jeu pour en fournir assez à chaque joueur
-        print(f"    - ERREUR : Pas assez de leaders pour fournir tous les joueurs.")
-        embed = BotEmbed(title=f"ERREUR", description=f"Le jeu ne comporte pas assez de leaders différents pour en fournir {nb_leaders} à {nb_players} joueurs.", colour=discord.Colour.red())
-        return await interaction.response.send_message(embed=embed, ephemeral=True)
-    else: #Si tous les paramètres sont valides
-        message = ""
-        i : int = 0
-        while (i < len(players)):
-            message = message + f"{players[i].mention} "
-            i = i + 1
-        draft = create_draft(nb_players, nb_leaders)
-        embed_draft = BotEmbed(title="DRAFT", description=f"New draft for {nb_players} players with {nb_leaders} leaders by player.")
-        i : int = 0
-        while (i < nb_players):
-            k : int = 0
-            field_value : str = f"**{players[i].mention} :**\n"
-            while (k < nb_leaders):
-                field_value = field_value + f"{emote_from_id(draft[i*nb_leaders+k])} {leader_from_id(draft[i*nb_leaders+k])}\n"
-                k = k + 1
-            field_value = field_value[:-1]
-            embed_draft.add_field(name=f"", value=field_value)
-            i = i + 1
-        print(f"    - SUCCES : Drafts distribuées.")
-        await interaction.response.send_message(message)
-        return await interaction.followup.send(embed=embed_draft)
+        nb_players = len(players)
+        if (nb_players < 2): #S'il n'y a pas assez de joueurs
+            print(f"    - ERREUR : Nombre de joueurs insuffisant.")
+            embed = BotEmbed(title=f"ERREUR", description=f"Au minimum 2 joueurs sont nécessaires pour générer une draft. Demandez aux autres joueurs de rejoindre votre salon vocal.", colour=discord.Colour.red())
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        elif (nb_players > 25): #S'il y a trop de joueurs
+            print(f"    - ERREUR : Nombre de joueurs trop élevé.")
+            embed = BotEmbed(title=f"ERREUR", description=f"Les drafts ne supportent que 25 joueurs au maximum.", colour=discord.Colour.red())
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        elif (nb_leaders > 15): #Si le nombre de leaders demandé est trop grand
+            print(f"    - ERREUR : Nombre de leaders trop élevé.")
+            embed = BotEmbed(title=f"ERREUR", description=f"Trop de leaders par joueur demandés (max. 15).", colour=discord.Colour.red())
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        elif (nb_players * nb_leaders > 77): #S'il n'y a pas assez de leaders dans le jeu pour en fournir assez à chaque joueur
+            print(f"    - ERREUR : Pas assez de leaders pour fournir tous les joueurs.")
+            embed = BotEmbed(title=f"ERREUR", description=f"Le jeu ne comporte pas assez de leaders différents pour en fournir {nb_leaders} à {nb_players} joueurs.", colour=discord.Colour.red())
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        else: #Si tous les paramètres sont valides
+            message = ""
+            i : int = 0
+            while (i < len(players)):
+                message = message + f"{players[i].mention} "
+                i = i + 1
+            draft = create_draft(nb_players, nb_leaders)
+            embed_draft = BotEmbed(title="DRAFT", description=f"New draft for {nb_players} players with {nb_leaders} leaders by player.")
+            i : int = 0
+            while (i < nb_players):
+                k : int = 0
+                field_value : str = f"**{players[i].mention} :**\n"
+                while (k < nb_leaders):
+                    field_value = field_value + f"{emote_from_id(draft[i*nb_leaders+k])} {leader_from_id(draft[i*nb_leaders+k])}\n"
+                    k = k + 1
+                field_value = field_value[:-1]
+                embed_draft.add_field(name=f"", value=field_value)
+                i = i + 1
+            print(f"    - SUCCES : Drafts distribuées.")
+            await interaction.response.send_message(message)
+            return await interaction.followup.send(embed=embed_draft)
 @bot.slash_command(guild_ids=SERVERS, name="mapvote", description="Crée un mapvote pour Civilization VI.")
 async def mapvote(interaction: discord.Interaction):
     print(f"COMMAND : /mapvote used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
-    return await make_mapvote(interaction)
+    author = interaction.user
+    if (not author.voice):
+        return await make_generic_mapvote(interaction)
+    else:
+        return await make_mapvote(interaction)
 #Renvoit un formulaire pour émettre des suggestions d'amélioration du bot
 @bot.slash_command(guild_ids=SERVERS, name="feedback", description="Formulaire pour envoyer une suggestion d'amélioration.")
 async def feedback(interaction: discord.Interaction):
@@ -257,7 +293,7 @@ async def rock_paper_scissors(interaction: discord.Interaction, member: discord.
 
 #================== MESSAGES COMMANDES ==================
 #Répète un message
-@bot.message_command(guild_ids=SERVERS, name="repeat")
+@bot.message_command(guild_ids=SERVERS, name="Repeat")
 async def repeat(interaction : discord.Interaction, message : discord.Message):
     print(f"MESSAGE COMMAND : Repeat used by @{interaction.user.name} in {interaction.guild.name} (#{interaction.channel.name})")
     embed = BotEmbed(title="REPEAT", description=f"{message.created_at}")

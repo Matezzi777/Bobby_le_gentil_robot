@@ -52,8 +52,8 @@ class SuccessEmbed(discord.Embed):
 class FeedbackForm(discord.ui.Modal):
     def __init__(self):
         super().__init__(title="FEEDBACK")
-        self.add_item(discord.ui.InputText(label="NAME", style=discord.InputTextStyle.short, placeholder="Name your suggestion !", min_length=3, max_length=50, required=True))
-        self.add_item(discord.ui.InputText(label="DESCRIPTION", style=discord.InputTextStyle.long, placeholder="Tell me more about your idea...", min_length=20, max_length=None, required=True))
+        self.add_item(discord.ui.InputText(label="Name", style=discord.InputTextStyle.short, placeholder="Name your suggestion !", min_length=3, max_length=50, required=True))
+        self.add_item(discord.ui.InputText(label="Description", style=discord.InputTextStyle.long, placeholder="Tell me more about your idea...", min_length=20, max_length=None, required=True))
 
     async def callback(self, interaction : discord.Interaction):
         admin : discord.User = interaction.guild.get_member(ID_ADMIN)

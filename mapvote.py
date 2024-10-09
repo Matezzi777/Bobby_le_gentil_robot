@@ -1,6 +1,8 @@
 from classes import *
 import discord.ui
 
+import discord.ext
+
 ############  BOUTONS  ############
 class Validated_Choice(discord.ui.Button):
     def __init__(self, *, label=" - ", style=discord.ButtonStyle.green, emoji=None) -> None:
@@ -91,13 +93,6 @@ class VersionBBG(discord.ui.View):
         self.needed_confirm: int = (self.nb_users // 2) + 1
         self.add_item(Choice(emoji="🛠️", label_content="BBG", list_users=users, needed_confirm=self.needed_confirm))
         self.add_item(Choice(emoji="🛠️", label_content="BBG Beta", list_users=users, needed_confirm=self.needed_confirm))
-class VersionBBS(discord.ui.View):
-    def __init__(self, users) -> None:
-        super().__init__(timeout=None)
-        self.nb_users: int = len(users)
-        self.needed_confirm: int = (self.nb_users // 2) + 1
-        self.add_item(Choice(emoji="🛠️", label_content="BBS", list_users=users, needed_confirm=self.needed_confirm))
-        self.add_item(Choice(emoji="🛠️", label_content="BBM", list_users=users, needed_confirm=self.needed_confirm))
 class Drafts(discord.ui.View):
     def __init__(self, users) -> None:
         super().__init__(timeout=None)
@@ -142,12 +137,9 @@ class Barbarians(discord.ui.View):
 ############ FONCTIONS ############
 async def make_mapvote(interaction: discord.Interaction):
     author = interaction.user
-    if (not author.voice):
-        return await interaction.response.send_message(embed=BotEmbed(title="JOIN A VOICE CHANNEL", description="Please, join a Voice Channel with the other players and retry to use this command."), ephemeral=True)
-    else:
-        channel = author.voice.channel
-        users = channel.members
-        nb_users: int = len(users)
+    channel = author.voice.channel
+    users = channel.members
+    nb_users: int = len(users)
     message = ""
     i: int = 0
     while (i < nb_users):
@@ -156,9 +148,35 @@ async def make_mapvote(interaction: discord.Interaction):
     message = f"Let's vote !\n\n*{nb_users}* players in the game :\n{message}"
     await interaction.response.send_message(message)
     await interaction.followup.send("**BBG VERSION**", view=VersionBBG(users))
-    await interaction.followup.send("**BBS OR BBM**", view=VersionBBS(users))
     await interaction.followup.send("**DRAFTS**", view=Drafts(users))
     await interaction.followup.send("**MAP**", view=Maps(users))
     await interaction.followup.send("**BALANCED CITY YIELDS (BCY)**", view=BCY(users))
     await interaction.followup.send("**RELIGIOUS VICTORY**", view=Religious(users))
     await interaction.followup.send("**BARBARIANS**", view=Barbarians(users))
+
+async def make_generic_mapvote(interaction: discord.Interaction):
+    channel : discord.TextChannel = interaction.channel
+    await interaction.response.send_message(f"Let's vote @everyone !")
+    message : discord.Message = await channel.send("**====================== BBG VERSION =======================**\n 🛠️ BBG **|** 🔎 BBG Beta")
+    await message.add_reaction("🛠️")
+    await message.add_reaction("🔎")
+    message = await channel.send("**========================= DRAFTS =========================**\n ✅ YES **|** ❌ NO")
+    await message.add_reaction("✅")
+    await message.add_reaction("❌")
+    message = await channel.send("**========================== MAP ===========================**\n 🌋 Pangaeae **|** 🌊 7 Seas **|** 🌍 Continents **|** ⛵ Lakes **|** 🗺️ TSL (True Start Locations)")
+    await message.add_reaction("🌋")
+    await message.add_reaction("🌊")
+    await message.add_reaction("🌍")
+    await message.add_reaction("⛵")
+    await message.add_reaction("🗺️")
+    message = await channel.send("**=============== BALANCED CITY YIELDS (BCY) ===============**\n ⭐ All cities **|** 🏙️ Capital Only **|** ❌ Disabled")
+    await message.add_reaction("⭐")
+    await message.add_reaction("🏙️")
+    await message.add_reaction("❌")
+    message = await channel.send("**=================== RELIGIOUS VICTORY ====================**\n ✅ Enabled **|** ❌ Disabled")
+    await message.add_reaction("✅")
+    await message.add_reaction("❌")
+    message = await channel.send("**======================= BARBARIANS =======================**\n ⚔️ Standard **|** 👔 Civilized **|** ❌ No Barbs")
+    await message.add_reaction("⚔️")
+    await message.add_reaction("👔")
+    await message.add_reaction("❌")
